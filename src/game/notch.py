@@ -1,5 +1,5 @@
-from src.marble import Marble
-from src.types import MoveError
+from game.marble import Marble
+from utils import MoveError
 
 
 class Notch:
