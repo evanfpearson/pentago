@@ -10,6 +10,9 @@ class Block:
         self.__notches = notches
         self.__size = size
 
+    def get_empty_positions(self) -> List[Position]:
+        return [Position(i, j) for i in range(self.get_size()) for j in range(self.get_size()) if self.__notches[i][j].is_empty()]
+
     def get_size(self) -> int:
         return self.__size
 
