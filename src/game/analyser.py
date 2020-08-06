@@ -4,9 +4,10 @@ from game.notch import Notch
 
 
 class BoardAnalyser:
-    def __init__(self, board: Board, win_length: int):
+    def __init__(self, board: Board):
         self.__board = board
-        self.__win_length = win_length
+        self.__is_over = False
+        self.__winner = None
 
     def get_full_size(self):
         return self.__board.get_size() * self.__board.get_block_size()
@@ -21,30 +22,41 @@ class BoardAnalyser:
         marble_row_on_block = row_num % block_size
         return [notch for block in self.__board.get_blocks()[block_row] for notch in block.get_row(marble_row_on_block)]
 
-    def check_win(self, colour: int):
+    def check_win(self, colours: List[int], win_length) -> None:
+        for colour in colours:
+            if self.__check_win(colour, win_length):
+                self.__is_over = True
+                self.__winner = colour
+                return
+
+    def get_winner(self):
+        return self.__winner
+
+    def __check_win(self, colour: int, win_length: int):
         return any([
-            self.__check_vertical_win(colour),
-            self.__check_diagonal_win(colour),
-            self.__check_horizontal_win(colour)
+            self.__check_vertical_win(colour, win_length),
+            self.__check_diagonal_win(colour, win_length),
+            self.__check_horizontal_win(colour, win_length)
         ])
 
-    def __check_vertical_win(self, colour: int):
+    # Check win helpers
+    def __check_vertical_win(self, colour: int, win_length: int):
         for col in range(self.get_full_size()):
-            for i in range(self.get_full_size() - self.__win_length):
-                if all([self.get_notch_array()[row+i][col].colour() == colour for row in range(self.__win_length)]):
+            for i in range(self.get_full_size() - win_length):
+                if all([self.get_notch_array()[row+i][col].colour() == colour for row in range(win_length)]):
                     return True
         return False
 
-    def __check_horizontal_win(self, colour):
+    def __check_horizontal_win(self, colour, win_length: int):
         for row in range(self.get_full_size()):
-            for i in range(self.get_full_size() - self.__win_length):
-                if all([self.get_notch_array()[row][col+i].colour() == colour for col in range(self.__win_length)]):
+            for i in range(self.get_full_size() - win_length):
+                if all([self.get_notch_array()[row][col+i].colour() == colour for col in range(win_length)]):
                     return True
         return False
 
-    def __check_diagonal_win(self, colour):
+    def __check_diagonal_win(self, colour, win_length: int):
         n = self.get_full_size()
-        w = self.__win_length
+        w = win_length
         for r_shift in range(n - w):
             for c_shift in range(n - w):
                 if any([
