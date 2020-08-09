@@ -6,11 +6,13 @@ from game.player import Player
 
 def main():
     config = read_config('config.yaml')
-    game_config = config['game']
-    board = Board.blank(game_config['board_size'], game_config['block_size'])
+    win_length, block_size, board_size = \
+        config['game']['win_length'], \
+        config['game']['block_size'], \
+        config['game']['board_size']
+    board = Board.blank(board_size, block_size)
     players = [Player(0), Player(1)]
-    game = Game(board, players, game_config['win_length'])
-    print(board)
+    game = Game(board, players, win_length)
     game.play()
 
 

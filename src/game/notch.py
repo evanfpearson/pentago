@@ -3,21 +3,24 @@ from utils import MoveError
 
 
 class Notch:
-    SYMBOLS = 'XZ8WN0'
+    SYMBOLS = 'X#Z8WN0'
 
-    def __init__(self, marble: Marble):
+    def __init__(self, marble: Marble = None):
         self.__marble = marble
 
-    def play(self, marble):
-        if isinstance(marble, Marble) and self.is_empty():
-            return Notch(marble)
+    def play(self, marble) -> 'Notch':
+        if isinstance(marble, Marble):
+            if self.is_empty():
+                return Notch(marble)
+            else:
+                raise MoveError('this spot is not empty')
         else:
             raise MoveError('only a marble can be played')
 
     def is_empty(self):
         return self.__marble is None
 
-    def colour(self):
+    def get_colour(self):
         if self.is_empty():
             return None
         else:
@@ -27,4 +30,7 @@ class Notch:
         if self.is_empty():
             return 'O'
         else:
-            return self.SYMBOLS[self.colour()]
+            return self.SYMBOLS[self.get_colour()]
+
+    def __eq__(self, other):
+        return self.get_colour() == other.get_colour()

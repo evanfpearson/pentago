@@ -1,7 +1,7 @@
 import yaml
 
 
-def read_config(config_path):
+def read_config(config_path) -> dict:
     with open(config_path) as f:
         return yaml.load(f, Loader=yaml.FullLoader)
 

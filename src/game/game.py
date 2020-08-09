@@ -12,6 +12,7 @@ class Game:
 
     def play(self):
         player = 0
+        print(self.__board)
         while True:
             analysis = BoardAnalyser(self.__board)
             analysis = self.marble_move(player, analysis)

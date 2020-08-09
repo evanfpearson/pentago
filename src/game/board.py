@@ -21,7 +21,7 @@ class Board:
 
     def play_marble(self, pos: Placement, colour) -> 'Board':
         block_pos, notch_pos = pos.get_block_pos(), pos.get_marble_pos()
-        return self.update_block(block_pos, self.get_block(block_pos).play(Marble(colour), notch_pos))
+        return self.__update_block(block_pos, self.get_block(block_pos).play(Marble(colour), notch_pos))
 
     def get_block(self, block_pos: Position) -> Block:
         return self.__blocks[block_pos.get_row()][block_pos.get_column()]
@@ -32,9 +32,9 @@ class Board:
 
     def rotate_block(self, rotation: Rotation) -> 'Board':
         block_pos = rotation.get_block_pos()
-        return self.update_block(block_pos, self.get_block(block_pos).rotate(rotation.clockwise()))
+        return self.__update_block(block_pos, self.get_block(block_pos).rotate(rotation.is_clockwise()))
 
-    def update_block(self, block_pos: Position, new_block: Block) -> 'Board':
+    def __update_block(self, block_pos: Position, new_block: Block) -> 'Board':
         new_blocks = deepcopy(self.__blocks)
         new_blocks[block_pos.get_row()][block_pos.get_column()] = new_block
         return Board(new_blocks)

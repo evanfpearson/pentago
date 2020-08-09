@@ -43,14 +43,14 @@ class BoardAnalyser:
     def __check_vertical_win(self, colour: int, win_length: int):
         for col in range(self.get_full_size()):
             for i in range(self.get_full_size() - win_length):
-                if all([self.get_notch_array()[row+i][col].colour() == colour for row in range(win_length)]):
+                if all([self.get_notch_array()[row+i][col].get_colour() == colour for row in range(win_length)]):
                     return True
         return False
 
     def __check_horizontal_win(self, colour, win_length: int):
         for row in range(self.get_full_size()):
             for i in range(self.get_full_size() - win_length):
-                if all([self.get_notch_array()[row][col+i].colour() == colour for col in range(win_length)]):
+                if all([self.get_notch_array()[row][col+i].get_colour() == colour for col in range(win_length)]):
                     return True
         return False
 
@@ -60,8 +60,8 @@ class BoardAnalyser:
         for r_shift in range(n - w):
             for c_shift in range(n - w):
                 if any([
-                    all([self.get_notch_array()[r_shift+i][c_shift+i].colour() == colour for i in range(w)]),
-                    all([self.get_notch_array()[n-r_shift-i-1][n-c_shift-i-1].colour() == colour for i in range(w)])
+                    all([self.get_notch_array()[r_shift+i][c_shift+i].get_colour() == colour for i in range(w)]),
+                    all([self.get_notch_array()[n-r_shift-i-1][n-c_shift-i-1].get_colour() == colour for i in range(w)])
                 ]):
                     return True
         return False

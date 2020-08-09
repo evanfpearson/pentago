@@ -21,5 +21,5 @@ class Rotation:
     def get_block_pos(self):
         return self.__block_pos
 
-    def clockwise(self):
+    def is_clockwise(self):
         return self.__clockwise

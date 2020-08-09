@@ -17,3 +17,11 @@ class Position:
 
     def get_column(self):
         return self.__col
+
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return False
+        if self.get_row() == other.get_row() and self.get_column() == other.get_column():
+            return True
+        else:
+            return False
