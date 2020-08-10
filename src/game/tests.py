@@ -5,7 +5,7 @@ from utils import MoveError
 from game.block import Block
 from game.position import Position
 from game.board import Board
-from game.move import Rotation
+from game.move import Rotation, Placement
 
 
 class TestMarble(unittest.TestCase):
@@ -125,4 +125,50 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(new_board.get_block(test['rot'].get_block_pos()), test['new'])
 
     def test_play_marble(self):
-        pass
+        o = None
+        tests = [
+            {
+                'move': Placement(Position(0, 0), Position(0, 0)),
+                'new': Block.from_int_array([[1, o, o], [1, o, o], [1, 1, o]]),
+                'colour': 1
+            },
+            {
+                'move': Placement(Position(0, 1), Position(2, 1)),
+                'new': Block.from_int_array([[o, o, o], [0, 1, o], [1, 0, o]]),
+                'colour': 0
+            }
+        ]
+        for test in tests:
+            new_board = self.test_board.play_marble(test['move'], test['colour'])
+            self.assertEqual(new_board.get_block(test['move'].get_block_pos()), test['new'])
+
+    def test_move_error_for_non_extant_block(self):
+        rotation_tests = [
+            Rotation(Position(100, 100), True),
+            Rotation(Position(-1, 0), False),
+            Rotation(Position(2, 1), True)
+        ]
+        placement_tests = [
+            Placement(Position(100, 100), Position(2, 2)),
+            Placement(Position(-1, 0), Position(2, 2)),
+            Placement(Position(2, 1), Position(2, 2))
+        ]
+        for test in rotation_tests:
+            with self.assertRaises(MoveError):
+                self.test_board.rotate_block(test)
+
+        for test in placement_tests:
+            with self.assertRaises(MoveError):
+                self.test_board.play_marble(test, 1)
+
+    def test_move_error_for_non_extant_notch(self):
+        placement_tests = [
+            Placement(Position(1, 1), Position(3, 2)),
+            Placement(Position(0, 0), Position(-1, 2)),
+            Placement(Position(0, 1), Position(2, -2))
+        ]
+
+        for test in placement_tests:
+            with self.assertRaises(MoveError):
+                self.test_board.play_marble(test, 1)
+

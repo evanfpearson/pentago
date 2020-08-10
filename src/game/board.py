@@ -1,4 +1,5 @@
 from copy import deepcopy
+from utils import MoveError
 from game.block import Block
 from game.position import Position
 from game.marble import Marble
@@ -24,7 +25,12 @@ class Board:
         return self.__update_block(block_pos, self.get_block(block_pos).play(Marble(colour), notch_pos))
 
     def get_block(self, block_pos: Position) -> Block:
-        return self.__blocks[block_pos.get_row()][block_pos.get_column()]
+        if block_pos.get_row() < 0 or block_pos.get_column() < 0:
+            raise MoveError('use positive notch numbers please')
+        try:
+            return self.__blocks[block_pos.get_row()][block_pos.get_column()]
+        except IndexError:
+            raise MoveError('block does not exist')
 
     @staticmethod
     def blank(board_size, block_size) -> 'Board':

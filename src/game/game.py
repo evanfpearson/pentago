@@ -2,6 +2,7 @@ from game.player import Player
 from game.board import Board
 from typing import List
 from game.analyser import BoardAnalyser
+from utils import MoveError
 
 
 class Game:
@@ -11,20 +12,31 @@ class Game:
         self.__win_length = win_length
 
     def play(self):
-        player = 0
+        player_num = 0
         print(self.__board)
         while True:
             analysis = BoardAnalyser(self.__board)
-            analysis = self.marble_move(player, analysis)
-            if analysis.check_win([player], self.__win_length):
+            while True:
+                try:
+                    analysis = self.marble_move(player_num, analysis)
+                    break
+                except MoveError as e:
+                    print(e.message)
+                    pass
+            if analysis.is_over([player_num], self.__win_length):
                 print(f"player {analysis.get_winner()} wins")
                 return
-            analysis = self.rotation(player, analysis)
-            analysis.check_win([player.get_colour() for player in self.__players], self.__win_length)
-            if analysis.check_win([player], self.__win_length):
+            while True:
+                try:
+                    analysis = self.rotation(player_num, analysis)
+                    break
+                except MoveError as e:
+                    print(e.message)
+                    pass
+            if analysis.is_over([player.get_colour() for player in self.__players], self.__win_length):
                 print(f"player {analysis.get_winner()} wins")
                 return
-            player = (player + 1) % len(self.__players)
+            player_num = (player_num + 1) % len(self.__players)
 
     def marble_move(self, player: int, analysis: BoardAnalyser) -> BoardAnalyser:
         marble_placement = self.__players[player].get_marble_placement(analysis)

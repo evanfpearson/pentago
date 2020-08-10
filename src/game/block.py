@@ -1,6 +1,7 @@
 from game.notch import Notch
 from game.marble import Marble
 from game.position import Position
+from utils import MoveError
 from copy import deepcopy
 from typing import List
 
@@ -40,7 +41,12 @@ class Block:
 
     def play(self, marble: Marble, pos: Position):
         new_notches = deepcopy(self.__notches)
-        new_notches[pos.get_row()][pos.get_column()] = new_notches[pos.get_row()][pos.get_column()].play(marble)
+        if pos.get_row() < 0 or pos.get_column() < 0:
+            raise MoveError('use positive notch numbers please')
+        try:
+            new_notches[pos.get_row()][pos.get_column()] = new_notches[pos.get_row()][pos.get_column()].play(marble)
+        except IndexError:
+            raise MoveError('notch does not exist')
         return Block(new_notches)
 
     @staticmethod

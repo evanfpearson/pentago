@@ -1,3 +1,4 @@
+import os
 from utils import read_config
 from game.board import Board
 from game.game import Game
@@ -5,6 +6,8 @@ from game.player import Player
 
 
 def main():
+    wd, _ = os.path.split(__file__)
+    os.chdir(wd)
     config = read_config('config.yaml')
     win_length, block_size, board_size = \
         config['game']['win_length'], \

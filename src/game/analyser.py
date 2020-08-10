@@ -6,7 +6,6 @@ from game.notch import Notch
 class BoardAnalyser:
     def __init__(self, board: Board):
         self.__board = board
-        self.__is_over = False
         self.__winner = None
 
     def get_full_size(self):
@@ -22,12 +21,12 @@ class BoardAnalyser:
         marble_row_on_block = row_num % block_size
         return [notch for block in self.__board.get_blocks()[block_row] for notch in block.get_row(marble_row_on_block)]
 
-    def check_win(self, colours: List[int], win_length) -> None:
+    def is_over(self, colours: List[int], win_length) -> bool:
         for colour in colours:
             if self.__check_win(colour, win_length):
-                self.__is_over = True
                 self.__winner = colour
-                return
+                return True
+        return False
 
     def get_winner(self):
         return self.__winner
@@ -57,11 +56,11 @@ class BoardAnalyser:
     def __check_diagonal_win(self, colour, win_length: int):
         n = self.get_full_size()
         w = win_length
-        for r_shift in range(n - w):
-            for c_shift in range(n - w):
+        for r_shift in range(n - w + 1):
+            for c_shift in range(n - w + 1):
                 if any([
                     all([self.get_notch_array()[r_shift+i][c_shift+i].get_colour() == colour for i in range(w)]),
-                    all([self.get_notch_array()[n-r_shift-i-1][n-c_shift-i-1].get_colour() == colour for i in range(w)])
+                    all([self.get_notch_array()[r_shift+i][n-c_shift-i-1].get_colour() == colour for i in range(w)])
                 ]):
                     return True
         return False

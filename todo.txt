@@ -15,4 +15,4 @@
 
 - AI
 
-- UI with PyGame
+- UI  PyGame

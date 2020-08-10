@@ -3,6 +3,14 @@ from game.move import Placement, Rotation
 from game.position import Position
 
 
+def get_string_of_length(n: int, prompt: str):
+    move_string = input(prompt)
+    while len(move_string) != n:
+        print(f'string must be length {n}')
+        move_string = input(prompt)
+    return move_string
+
+
 class Player:
     def __init__(self, colour):
         self.__colour = colour
@@ -13,9 +21,8 @@ class Player:
         First couple of characters: The block on which to place the marble
         Second couple of characters: The position to place the marble
         """
-        move_string = input(move_instruction)
-        while len(move_string) != 4:
-            move_string = input(move_instruction)
+        move_string = get_string_of_length(4, move_instruction)
+
         return Placement(
             block_pos=Position(int(move_string[0]), int(move_string[1])),
             marble_pos=Position(int(move_string[2]), int(move_string[3]))
@@ -27,9 +34,7 @@ class Player:
         First couple of characters: The block to rotate
         Final character: 0 - anticlockwise, 1 clockwise
         """
-        move_string = input(rotation_instruction)
-        while len(move_string) != 3:
-            move_string = input(rotation_instruction)
+        move_string = get_string_of_length(3, rotation_instruction)
 
         return Rotation(
             block_pos=Position(int(move_string[0]), int(move_string[1])),
