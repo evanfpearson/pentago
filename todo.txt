@@ -1,17 +1,5 @@
-- Exception Handling
-	- Move off board: Index Error
-	- Bad config err - catch errors - better to ask forgiveness than permission
-	- Attempted placement of marble on marble: MoveError
-	- Attempted rotation of non-existant block: Index Error
-
-- Win Checking
-	- Not currently functional
-
 - Testing
-	- Light unit tests for main board components
-		- Block
-		- Board
-		- Notch
+	- Board Analyser tests
 
 - AI
 
