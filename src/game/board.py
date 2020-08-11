@@ -20,7 +20,7 @@ class Board:
     def get_blocks(self):
         return self.__blocks
 
-    def play_marble(self, pos: Placement, colour) -> 'Board':
+    def play_marble(self, pos: Placement, colour: int) -> 'Board':
         block_pos, notch_pos = pos.get_block_pos(), pos.get_marble_pos()
         return self.__update_block(block_pos, self.get_block(block_pos).play(Marble(colour), notch_pos))
 

@@ -12,8 +12,7 @@ class BoardAnalyser:
         return self.__board.get_size() * self.__board.get_block_size()
 
     def get_notch_array(self) -> List[List[Notch]]:
-        n = self.__board.get_block_size() * self.__board.get_size()
-        return [self.get_notch_row(row_num) for row_num in range(n)]
+        return [self.get_notch_row(row_num) for row_num in range(self.get_full_size())]
 
     def get_notch_row(self, row_num) -> List[Notch]:
         block_size = self.__board.get_block_size()
@@ -41,14 +40,14 @@ class BoardAnalyser:
     # Check win helpers
     def __check_vertical_win(self, colour: int, win_length: int):
         for col in range(self.get_full_size()):
-            for i in range(self.get_full_size() - win_length):
+            for i in range(self.get_full_size() - win_length + 1):
                 if all([self.get_notch_array()[row+i][col].get_colour() == colour for row in range(win_length)]):
                     return True
         return False
 
     def __check_horizontal_win(self, colour, win_length: int):
         for row in range(self.get_full_size()):
-            for i in range(self.get_full_size() - win_length):
+            for i in range(self.get_full_size() - win_length + 1):
                 if all([self.get_notch_array()[row][col+i].get_colour() == colour for col in range(win_length)]):
                     return True
         return False

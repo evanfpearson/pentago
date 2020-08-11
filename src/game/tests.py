@@ -6,6 +6,7 @@ from game.block import Block
 from game.position import Position
 from game.board import Board
 from game.move import Rotation, Placement
+from game.analyser import BoardAnalyser
 
 
 class TestMarble(unittest.TestCase):
@@ -172,3 +173,35 @@ class TestBoard(unittest.TestCase):
             with self.assertRaises(MoveError):
                 self.test_board.play_marble(test, 1)
 
+
+class TestAnalyser(unittest.TestCase):
+    def setUp(self) -> None:
+        o = None
+        block00 = Block.from_int_array([[o, o, o], [1, o, o], [o, o, o]])
+        block01 = Block.from_int_array([[o, o, o], [0, 1, o], [o, o, o]])
+        block10 = Block.from_int_array([[1, 0, 1], [1, 1, o], [1, 1, 1]])
+        block11 = Block.from_int_array([[o, o, o], [1, o, o], [o, 1, o]])
+        self.test_board = Board([[block00, block01], [block10, block11]])
+
+    def test_is_over(self):
+        win_tests = [
+            {'placement': Placement(Position(0, 0), Position(2, 0)), 'colour': 1, 'length': 5, 'win': True},
+            {'placement': Placement(Position(0, 0), Position(2, 1)), 'colour': 1, 'length': 5, 'win': True},
+            {'placement': Placement(Position(0, 1), Position(2, 0)), 'colour': 1, 'length': 5, 'win': True},
+            {'placement': Placement(Position(1, 1), Position(2, 0)), 'colour': 1, 'length': 5, 'win': True},
+            {'placement': Placement(Position(0, 0), Position(2, 0)), 'colour': 1, 'length': 6, 'win': False},
+            {'placement': Placement(Position(0, 0), Position(2, 1)), 'colour': 1, 'length': 6, 'win': False},
+            {'placement': Placement(Position(0, 1), Position(2, 0)), 'colour': 1, 'length': 6, 'win': False},
+            {'placement': Placement(Position(1, 1), Position(2, 0)), 'colour': 1, 'length': 6, 'win': False},
+            {'placement': Placement(Position(1, 1), Position(0, 0)), 'colour': 1, 'length': 5, 'win': False},
+            {'placement': Placement(Position(1, 1), Position(1, 2)), 'colour': 1, 'length': 5, 'win': False},
+            {'placement': Placement(Position(1, 1), Position(1, 2)), 'colour': 0, 'length': 5, 'win': False},
+            {'placement': Placement(Position(0, 0), Position(2, 0)), 'colour': 0, 'length': 5, 'win': False},
+        ]
+        for i, test in enumerate(win_tests):
+            board = self.test_board.play_marble(test['placement'], test['colour'])
+            self.assertEqual(
+                BoardAnalyser(board).is_over([0, 1], test['length']),
+                test['win'],
+                "\n" + str(board) + f"\nTest {i}"
+            )
