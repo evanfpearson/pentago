@@ -1,8 +1,10 @@
 from game.player import Player
+from utils import read_config
 from game.board import Board
 from typing import List
+from game.move import Rotation, Placement
+from game.position import Position
 from game.analyser import BoardAnalyser
-from utils import MoveError
 
 
 class Game:
@@ -10,46 +12,41 @@ class Game:
         self.__board = board
         self.__players = players
         self.__win_length = win_length
+        self.__player_num = 0
+        self.__stage = 0
 
-    def play(self):
-        player_num = 0
-        print(self.__board)
-        while True:
-            analysis = BoardAnalyser(self.__board)
-            while True:
-                try:
-                    analysis = self.marble_move(player_num, analysis)
-                    break
-                except MoveError as e:
-                    print(e.message)
-                    pass
-            if analysis.is_over([player_num], self.__win_length):
-                print(f"player {analysis.get_winner()} wins")
-                return
-            while True:
-                try:
-                    analysis = self.rotation(player_num, analysis)
-                    break
-                except MoveError as e:
-                    print(e.message)
-                    pass
-            if analysis.is_over([player.get_colour() for player in self.__players], self.__win_length):
-                print(f"player {analysis.get_winner()} wins")
-                return
-            player_num = (player_num + 1) % len(self.__players)
+    def next_player(self):
+        self.__player_num = (self.__player_num + 1) % len(self.__players)
+        self.__stage = 0
 
-    def marble_move(self, player: int, analysis: BoardAnalyser) -> BoardAnalyser:
-        marble_placement = self.__players[player].get_marble_placement(analysis)
-        self.update_board(self.__board.play_marble(marble_placement, player))
-        print(self.__board)
-        return BoardAnalyser(self.__board)
+    def next_stage(self):
+        self.__stage = self.__stage + 1
 
-    def rotation(self, player: int, analysis: BoardAnalyser) -> BoardAnalyser:
-        rotation = self.__players[player].get_rotation(analysis)
-        self.update_board(self.__board.rotate_block(rotation))
-        print(self.__board)
-        return BoardAnalyser(self.__board)
+    def marble_move(self, player: int, row, col):
+        n = self.__board.get_block_size()
+        marble_placement = Placement(Position(row // n, col // n), Position(row % n, col % n))
+        self.__update_board(self.__board.play_marble(marble_placement, player))
 
-    def update_board(self, board: Board):
+    def rotation(self, rotation: Rotation):
+        self.__update_board(self.__board.rotate_block(rotation))
+
+    def draw(self, stdscr, top_left_from_top, top_left_from_left, cursor):
+        self.__board.draw(stdscr, top_left_from_top, top_left_from_left, cursor)
+
+    def draw_width(self):
+        return self.__board.draw_width()
+
+    @staticmethod
+    def from_config(config_path: str):
+        config = read_config(config_path)
+        win_length, block_size, board_size = \
+            config['game']['win_length'], \
+            config['game']['block_size'], \
+            config['game']['board_size']
+        board = Board.blank(board_size, block_size)
+        players = [Player(0), Player(1)]
+        return Game(board, players, win_length)
+
+    def __update_board(self, board: Board):
         self.__board = board
 

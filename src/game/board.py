@@ -4,6 +4,7 @@ from game.block import Block
 from game.position import Position
 from game.marble import Marble
 from game.move import Placement, Rotation
+from game.cursor import Cursor
 from typing import List
 
 
@@ -40,6 +41,24 @@ class Board:
         block_pos = rotation.get_block_pos()
         return self.__update_block(block_pos, self.get_block(block_pos).rotate(rotation.is_clockwise()))
 
+    # Curses Draw Methods
+    def draw(self, stdscr, top_left_from_top: int, top_left_from_left: int, cursor):
+        block_width, block_height = 4 * self.get_block_size(), 2 * self.get_block_size()
+        for row_num, row in enumerate(self.get_blocks()):
+            for col_num, block in enumerate(row):
+                block_cursor = self.get_block_cursor(row_num, col_num, cursor)
+                block.draw(stdscr, top_left_from_top + block_height * row_num, top_left_from_left + block_width * col_num, block_cursor)
+
+    def get_block_cursor(self, block_row, block_col, cursor):
+        if (cursor.get_y() // self.get_block_size(), cursor.get_x() // self.get_block_size()) == (block_row, block_col):
+            return Cursor(cursor.get_y() % self.get_block_size(), cursor.get_x() % self.get_block_size())
+        else:
+            return Cursor(-1, -1)
+
+    def draw_width(self):
+        return 4 * self.get_block_size() * self.get_size() + 1
+
+    # Private Methods
     def __update_block(self, block_pos: Position, new_block: Block) -> 'Board':
         new_blocks = deepcopy(self.__blocks)
         new_blocks[block_pos.get_row()][block_pos.get_column()] = new_block
@@ -55,12 +74,13 @@ class Board:
     # | O   O   O | O   O   O |
     # +---+---+---+---+---+---+
     def __str__(self):
-        h = '+---' * self.get_size() * self.get_block_size() + '+\n'
+        h = ''.join(['+', '--', '---' * self.get_block_size()]) * self.get_size() + '+\n'
 
         def row_string(block_row: int, marble_row: int):
             return '|'.join([block.row_string(marble_row) for block in self.__blocks[block_row]]).join(['|', '|'])
 
         def block_row_string(block_row: int):
-            return '\n'.join([row_string(block_row, marble_row) for marble_row in range(self.get_block_size())]) + '\n'
+            blank = '\n'+''.join(['|', '  ', '   ' * self.get_block_size()]) * self.get_size() + '|\n'
+            return blank.join([row_string(block_row, marble_row) for marble_row in range(self.get_block_size())]) + '\n'
 
         return h.join([block_row_string(b) for b in range(self.get_size())]).join([h, h])

@@ -3,7 +3,7 @@ from utils import MoveError
 
 
 class Notch:
-    SYMBOLS = 'X#Z8WN0'
+    SYMBOLS = '◍●'
 
     def __init__(self, marble: Marble = None):
         self.__marble = marble
@@ -28,7 +28,7 @@ class Notch:
 
     def get_symbol(self):
         if self.is_empty():
-            return 'O'
+            return '○'
         else:
             return self.SYMBOLS[self.get_colour()]
 
