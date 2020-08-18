@@ -15,8 +15,11 @@ class BoardAnalyser:
                 return True
         return False
 
-    def get_winner(self):
-        return self.__winner
+    def get_winner(self, colours: List[int], win_length):
+        for colour in colours:
+            if self.__check_win(colour, win_length):
+                return colour
+        return None
 
     def __get_notch_array(self) -> List[List[Notch]]:
         return [self.__get_notch_row(row_num) for row_num in range(self.__get_full_size())]

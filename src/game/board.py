@@ -6,6 +6,7 @@ from game.marble import Marble
 from game.move import Placement, Rotation
 from game.cursor import Cursor
 from typing import List
+import curses
 
 
 class Board:
@@ -42,12 +43,16 @@ class Board:
         return self.__update_block(block_pos, self.get_block(block_pos).rotate(rotation.is_clockwise()))
 
     # Curses Draw Methods
-    def draw(self, stdscr, top_left_from_top: int, top_left_from_left: int, cursor):
+    def draw(self, stdscr, top_left_from_top: int, top_left_from_left: int, cursor: Cursor, stage: int):
         block_width, block_height = 4 * self.get_block_size(), 2 * self.get_block_size()
         for row_num, row in enumerate(self.get_blocks()):
             for col_num, block in enumerate(row):
                 block_cursor = self.get_block_cursor(row_num, col_num, cursor)
-                block.draw(stdscr, top_left_from_top + block_height * row_num, top_left_from_left + block_width * col_num, block_cursor)
+                if stage == 1 and cursor.get_y() == row_num and cursor.get_x() == col_num:
+                    stdscr.attron(curses.color_pair(2))
+                block.draw(stdscr, top_left_from_top + block_height * row_num, top_left_from_left + block_width * col_num, block_cursor, stage)
+                if stage == 1 and cursor.get_y() == row_num and cursor.get_x() == col_num:
+                    stdscr.attroff(curses.color_pair(2))
 
     def get_block_cursor(self, block_row, block_col, cursor):
         if (cursor.get_y() // self.get_block_size(), cursor.get_x() // self.get_block_size()) == (block_row, block_col):
@@ -56,7 +61,10 @@ class Board:
             return Cursor(-1, -1)
 
     def draw_width(self):
-        return 4 * self.get_block_size() * self.get_size() + 1
+        return 4 * self.get_block_size() * self.get_size()
+
+    def draw_height(self):
+        return 2 * self.get_block_size() * self.get_size()
 
     # Private Methods
     def __update_block(self, block_pos: Position, new_block: Block) -> 'Board':

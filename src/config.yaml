@@ -3,3 +3,4 @@ game:
   block_size: 3
   board_size: 2
   win_length: 5
+  players: 2

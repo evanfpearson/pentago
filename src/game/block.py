@@ -51,7 +51,7 @@ class Block:
             raise MoveError('notch does not exist')
         return Block(new_notches)
 
-    def draw(self, stdscr, top_left_from_top: int, top_left_from_left: int, cursor):
+    def draw(self, stdscr, top_left_from_top: int, top_left_from_left: int, cursor, stage):
         block_width, block_height = 4 * self.get_size(), 2 * self.get_size()
         textpad.rectangle(
             stdscr,
@@ -61,17 +61,17 @@ class Block:
             top_left_from_left + block_width
         )
         for row in range(self.get_size()):
-            self.draw_row(stdscr, row, top_left_from_top + 1 + 2 * row, top_left_from_left + 1, cursor)
+            self.draw_row(stdscr, row, top_left_from_top + 1 + 2 * row, top_left_from_left + 1, cursor, stage)
 
-    def draw_row(self, stdscr, row_num, start_y, start_x, cursor):
+    def draw_row(self, stdscr, row_num, start_y, start_x, cursor, stage):
         stdscr.addstr(start_y, start_x, ' ')
         for i, notch in enumerate(self.get_row(row_num)):
             if i > 0:
                 stdscr.addstr('   ')
-            if (cursor.get_y(), cursor.get_x()) == (row_num, i):
+            if (cursor.get_y(), cursor.get_x()) == (row_num, i) and stage == 0:
                 stdscr.attron(curses.color_pair(2))
             stdscr.addstr(notch.get_symbol())
-            if (cursor.get_y(), cursor.get_x()) == (row_num, i):
+            if (cursor.get_y(), cursor.get_x()) == (row_num, i) and stage == 0:
                 stdscr.attroff(curses.color_pair(2))
         stdscr.addstr(' ')
 
