@@ -79,6 +79,7 @@ def draw_rotate_string(stdscr, game: Game, screen_width: int):
     whitespace = (screen_width - len(rotate_string)) // 2
     stdscr.addstr(game.draw_height() + 6, whitespace, rotate_string)
 
+
 def draw_winner_string(stdscr, game, screen_width):
     win_str = f"Player {game.winner()} wins!"
     whitespace = (screen_width - len(win_str)) // 2
