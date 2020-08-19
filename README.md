@@ -1,6 +1,6 @@
 # Pentago
 
-[![Build Status](https://img.shields.io/github/workflow/status/evanfpearson/pentago/Continuous%20Integration)](https://travis-ci.org/joemccann/dillinger)
+[![Build Status](https://img.shields.io/github/workflow/status/evanfpearson/pentago/Continuous%20Integration)](https://github.com/evanfpearson/pentago/actions?query=workflow%3A%22Continuous+Integration%22)
 
 Terminal interface for the board game Pentago. Written in Python.
 
